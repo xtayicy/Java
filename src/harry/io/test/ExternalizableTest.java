@@ -22,44 +22,49 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class ExternalizableTest {
 	public static void main(String[] args) {
-		try{
-			Customer customer = new Customer(1,"1234-5678-9876");
+		try {
+			Customer customer = new Customer(1, "1234-5678-9876");
 			System.out.println("Before saving object: ");
 			System.out.println("ID:" + customer.getId() + " CC:" + customer.getCreditCard());
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File("customer.dat")));
-			out.writeObject(customer);
-			out.close();
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File("customer.dat")));
-			customer = (Customer) in.readObject();
-			System.out.println("After retrieving object: ");
-			System.out.println("ID:" + customer.getId() + " CC:" + customer.getCreditCard());
-			in.close();
-		}catch(Exception e){
+			try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File("customer.dat")));) {
+				out.writeObject(customer);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File("customer.dat")));) {
+				customer = (Customer) in.readObject();
+				System.out.println("After retrieving object: ");
+				System.out.println("ID:" + customer.getId() + " CC:" + customer.getCreditCard());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 }
 
-class Customer implements Externalizable{
+class Customer implements Externalizable {
 	private int id;
 	private String creditCard;
 	private static Cipher cipher;
 	private static SecretKeySpec skeySpec;
-	
+
 	public Customer() {
 		id = 0;
 		creditCard = "";
 	}
 
-	static{
-		try{
+	static {
+		try {
 			CreateCipher();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -83,7 +88,7 @@ class Customer implements Externalizable{
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput out){
+	public void writeExternal(ObjectOutput out) {
 		try {
 			out.write(id);
 			encrypt();
@@ -94,8 +99,8 @@ class Customer implements Externalizable{
 			e.printStackTrace();
 		}
 	}
-	
-	private void encrypt() throws Exception{
+
+	private void encrypt() throws Exception {
 		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 		byte[] buff = cipher.doFinal(creditCard.getBytes());
 		creditCard = parseByte2HexStr(buff);
@@ -117,32 +122,32 @@ class Customer implements Externalizable{
 		byte[] buff = cipher.doFinal(parseHexStr2Byte(str));
 		creditCard = new String(buff);
 	}
-	
+
 	private static String parseByte2HexStr(byte buf[]) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < buf.length; i++) {
-            String hex = Integer.toHexString(buf[i] & 0xFF);
-            if (hex.length() == 1) {
-                    hex = '0' + hex;
-            }
-            
-            sb.append(hex.toUpperCase());
-        }
-        
-        return sb.toString();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < buf.length; i++) {
+			String hex = Integer.toHexString(buf[i] & 0xFF);
+			if (hex.length() == 1) {
+				hex = '0' + hex;
+			}
+
+			sb.append(hex.toUpperCase());
+		}
+
+		return sb.toString();
 	}
-	
+
 	private static byte[] parseHexStr2Byte(String hexStr) {
-        if (hexStr.length() < 1)
-                return null;
-        
-        byte[] result = new byte[hexStr.length()/2];
-        for (int i = 0;i< hexStr.length()/2; i++) {
-            int high = Integer.parseInt(hexStr.substring(i*2, i*2+1), 16);
-            int low = Integer.parseInt(hexStr.substring(i*2+1, i*2+2), 16);
-            result[i] = (byte) (high * 16 + low);
-        }
-        
-        return result;
+		if (hexStr.length() < 1)
+			return null;
+
+		byte[] result = new byte[hexStr.length() / 2];
+		for (int i = 0; i < hexStr.length() / 2; i++) {
+			int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
+			int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), 16);
+			result[i] = (byte) (high * 16 + low);
+		}
+
+		return result;
 	}
 }
