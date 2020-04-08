@@ -8,41 +8,41 @@ package harry.thread.test;
 public class ProducerConsumerGame {
 	public static void main(String[] args) {
 		Bucket bucket = new Bucket();
-		new Thread(new Producer(bucket)).start();
-		new Thread(new Consumer(bucket)).start();
+		new Thread(new ProducerConsumerGame().new Producer(bucket)).start();
+		new Thread(new ProducerConsumerGame().new Consumer(bucket)).start();
+	}
+	
+	class Producer implements Runnable{
+		private Bucket bucket;
+		
+		public Producer(Bucket bucket) {
+			super();
+			this.bucket = bucket;
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < 10; i++) {
+				bucket.put((int)(Math.random() * 100));
+			}
+		}
+	}
+	
+	class Consumer implements Runnable{
+		private Bucket bucket;
+		
+		public Consumer(Bucket bucket) {
+			this.bucket = bucket;
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < 10; i++) {
+				bucket.get();
+			}
+		}
 	}
 }
-
-final class Producer implements Runnable{
-	private Bucket bucket;
-	
-	public Producer(Bucket bucket) {
-		super();
-		this.bucket = bucket;
-	}
-
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			bucket.put((int)(Math.random() * 100));
-		}
-	}
-};
-
-final class Consumer implements Runnable{
-	private Bucket bucket;
-	
-	public Consumer(Bucket bucket) {
-		this.bucket = bucket;
-	}
-
-	@Override
-	public void run() {
-		for (int i = 0; i < 10; i++) {
-			bucket.get();
-		}
-	}
-};
 
 class Bucket{
 	private int packOfBalls;
@@ -77,4 +77,4 @@ class Bucket{
 		System.out.println("Producer Put " + packOfBalls);
 		notify();
 	}
-};
+}
