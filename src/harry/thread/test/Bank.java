@@ -33,7 +33,7 @@ public class Bank {
 		}
 	}
 	
-	static class Teller{
+	private static class Teller{
 		public static void getService(int i){
 			try {
 				System.out.println("serving: " + i);

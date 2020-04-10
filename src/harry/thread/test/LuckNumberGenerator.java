@@ -12,11 +12,11 @@ import java.util.concurrent.TransferQueue;
 public class LuckNumberGenerator {
 	public static void main(String[] args) {
 		TransferQueue<String> queue = new LinkedTransferQueue<String>();
-		Thread producer = new Thread(new LuckNumberGenerator().new Producer(queue));
+		Thread producer = new Thread(new Producer(queue));
 		producer.setDaemon(true);
 		producer.start();
 		for (int i = 0; i < 10; i++) {
-			Thread consumer = new Thread(new LuckNumberGenerator().new Consumer(queue));
+			Thread consumer = new Thread(new Consumer(queue));
 			consumer.setDaemon(true);
 			consumer.start();
 			try {
@@ -27,7 +27,7 @@ public class LuckNumberGenerator {
 		}
 	}
 	
-	class Producer implements Runnable{
+	private static class Producer implements Runnable{
 		private final TransferQueue<String> queue;
 		
 		public Producer(TransferQueue<String> queue) {
@@ -55,7 +55,7 @@ public class LuckNumberGenerator {
 		}
 	}
 	
-	class Consumer implements Runnable{
+	private static class Consumer implements Runnable{
 		private final TransferQueue queue;
 		
 		public Consumer(TransferQueue queue) {

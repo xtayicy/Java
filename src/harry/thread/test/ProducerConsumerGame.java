@@ -8,11 +8,11 @@ package harry.thread.test;
 public class ProducerConsumerGame {
 	public static void main(String[] args) {
 		Bucket bucket = new Bucket();
-		new Thread(new ProducerConsumerGame().new Producer(bucket)).start();
-		new Thread(new ProducerConsumerGame().new Consumer(bucket)).start();
+		new Thread(new Producer(bucket)).start();
+		new Thread(new Consumer(bucket)).start();
 	}
 	
-	class Producer implements Runnable{
+	private static class Producer implements Runnable{
 		private Bucket bucket;
 		
 		public Producer(Bucket bucket) {
@@ -28,7 +28,7 @@ public class ProducerConsumerGame {
 		}
 	}
 	
-	class Consumer implements Runnable{
+	private static class Consumer implements Runnable{
 		private Bucket bucket;
 		
 		public Consumer(Bucket bucket) {
