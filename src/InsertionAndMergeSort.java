@@ -43,7 +43,15 @@ public class InsertionAndMergeSort {
 		}
 		
 		/**
-		 * 
+		 *  3 4 7 8 1 2 5 6
+			3 4 7 8 0 0 0 0
+			
+			1 4 7 8 1 2 5 6
+			1 2 7 8 1 2 5 6
+			1 2 3 8 1 2 5 6
+			1 2 3 4 1 2 5 6
+			1 2 3 4 5 2 5 6
+			1 2 3 4 5 6 5 6
 		 */
 		public void merge(int[] srcData, int[] destData, int lowerIndex, int midIndex, int upperIndex) {
 			if(srcData[midIndex] <= srcData[midIndex + 1]){
